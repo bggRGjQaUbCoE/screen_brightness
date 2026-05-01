@@ -163,4 +163,9 @@ abstract class ScreenBrightnessPlatform extends PlatformInterface {
     throw UnimplementedError(
         'canChangeSystemBrightness has not been implemented.');
   }
+
+  Future<void> restoreBrightnessMode() async {
+    throw UnimplementedError(
+        'restoreBrightnessMode has not been implemented.');
+  }
 }

@@ -76,3 +76,5 @@ screen_brightness_ohos/ohos/oh-package-lock.json5
 .idea/screen_brightness.iml
 .idea/modules.xml
 .idea/misc.xml
+
+.idea/

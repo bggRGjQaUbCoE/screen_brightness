@@ -17,3 +17,5 @@ const methodNameIsAnimate = 'isAnimate';
 const methodNameSetAnimate = 'setAnimate';
 
 const methodNameCanChangeSystemBrightness = 'canChangeSystemBrightness';
+
+const methodNameRestoreBrightnessMode = 'restoreBrightnessMode';

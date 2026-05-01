@@ -280,4 +280,10 @@ class MethodChannelScreenBrightness extends ScreenBrightnessPlatform {
     return await pluginMethodChannel
         .invokeMethod(methodNameCanChangeSystemBrightness);
   }
+
+  @override
+  Future<void> restoreBrightnessMode() async {
+    await pluginMethodChannel
+        .invokeMethod(methodNameRestoreBrightnessMode);
+  }
 }

@@ -81,6 +81,8 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
      */
     private var systemScreenBrightness by Delegates.notNull<Float>()
 
+    private var brightnessMode: Int? = null
+
     /**
      * The value which will be set when user called [handleSetApplicationScreenBrightnessMethodCall]
      * or [handleResetApplicationScreenBrightnessMethodCall]
@@ -146,6 +148,7 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
             "isAnimate" -> handleIsAnimateMethodCall(result)
             "setAnimate" -> handleSetAnimateMethodCall(call, result)
             "canChangeSystemBrightness" -> handleCanChangeSystemBrightness(result)
+            "restoreBrightnessMode" -> restoreBrightnessMode()
             else -> result.notImplemented()
         }
     }
@@ -345,9 +348,33 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
             }
         }
 
+        if (brightness < systemScreenBrightness && brightnessMode == null) {
+            val contentResolver = context.contentResolver
+            brightnessMode = Settings.System.getInt(
+                contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE
+            )
+            if (brightnessMode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) {
+                Settings.System.putInt(
+                    contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+                )
+            }
+        }
+
         return Settings.System.putInt(
             context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, (maximumScreenBrightness * brightness).toInt()
         )
+    }
+
+    private fun restoreBrightnessMode() {
+        if (brightnessMode == null || context == null) return
+        if (brightnessMode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) {
+            Settings.System.putInt(
+                context!!.contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, brightnessMode!!
+            )
+        }
+        brightnessMode = null
     }
 
     private fun getScreenMaximumBrightness(context: Context): Float {
