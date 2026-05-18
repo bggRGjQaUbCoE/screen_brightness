@@ -179,12 +179,7 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
         }
 
         systemScreenBrightness = brightness
-        handleSystemScreenBrightnessChanged(brightness)
         result.success(null)
-    }
-
-    private fun handleSystemScreenBrightnessChanged(brightness: Float) {
-        systemScreenBrightnessChangedStreamHandler?.addScreenBrightnessToEventSink(brightness.toDouble())
     }
 
     private fun handleGetApplicationScreenBrightnessMethodCall(result: MethodChannel.Result) {
@@ -238,7 +233,6 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
         }
 
         applicationScreenBrightness = brightness
-        handleApplicationScreenBrightnessChanged(brightness)
         result.success(null)
     }
 
@@ -256,12 +250,7 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
         }
 
         applicationScreenBrightness = null
-        handleApplicationScreenBrightnessChanged(systemScreenBrightness)
         result.success(null)
-    }
-
-    private fun handleApplicationScreenBrightnessChanged(brightness: Float) {
-        applicationScreenBrightnessChangedStreamHandler?.addScreenBrightnessToEventSink(brightness.toDouble())
     }
 
     private fun handleHasApplicationScreenBrightnessChangedMethodCall(result: MethodChannel.Result) {
@@ -336,16 +325,14 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
     }
 
     private fun setSystemScreenBrightness(context: Context, brightness: Float): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!canWriteSystemSetting(context)) {
-                Intent(
-                    Settings.ACTION_MANAGE_WRITE_SETTINGS, "package:${context.packageName}".toUri()
-                ).let {
-                    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(it)
-                }
-                return false
+        if (!canWriteSystemSetting(context)) {
+            Intent(
+                Settings.ACTION_MANAGE_WRITE_SETTINGS, "package:${context.packageName}".toUri()
+            ).let {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(it)
             }
+            return false
         }
 
         if (brightness < systemScreenBrightness && brightnessMode == null) {
@@ -407,10 +394,6 @@ class ScreenBrightnessAndroidPlugin : FlutterPlugin, MethodCallHandler, Activity
     }
 
     private fun canWriteSystemSetting(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Settings.System.canWrite(context)
-        } else {
-            true
-        }
+        return Settings.System.canWrite(context)
     }
 }

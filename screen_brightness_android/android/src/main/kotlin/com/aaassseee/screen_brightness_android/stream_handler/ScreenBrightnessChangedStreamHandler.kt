@@ -10,9 +10,4 @@ class ScreenBrightnessChangedStreamHandler(
         val eventSink = eventSink ?: return
         onListenStart?.invoke(eventSink)
     }
-
-    fun addScreenBrightnessToEventSink(brightness: Double) {
-        val eventSink = eventSink ?: return
-        eventSink.success(brightness)
-    }
 }
